@@ -49,7 +49,7 @@ bool isSign(char sign)
 
 void badInput()
 {
-	std::cout << "0\n";
+	std::cerr << "0\n";
 	return;
 }
 
@@ -71,10 +71,7 @@ void RPN::operationMaker()
 		_operation.pop();
 
 		if (std::isdigit(abs(second) + '0') == false || isSign(_operation.front()) == false)
-		{
-			first = 0;
-			break ;
-		}
+			return badInput();
 		else
 			first = calculator(first, second, _operation.front());
 		_operation.pop();
