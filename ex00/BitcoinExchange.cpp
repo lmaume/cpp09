@@ -32,6 +32,8 @@ void	print_map(std::map<std::string, std::string>& m)
 void	BitcoinExchange::printExchange(std::string stringValue, int i)
 {
 	std::map<std::string, std::string>::const_iterator it = _data.lower_bound(stringValue.substr(0, i-1));
+	if (it != _data.begin())
+		it--;
 	std::string tmp = (*it).second;
 
 	double doubleValue = atof(stringValue.substr(i+2).c_str());
@@ -85,10 +87,10 @@ int	isValueValid(std::string value)
 
 	if ((const unsigned long)i == value.npos)
 	{
-		std::cout << "Ersror: bad input => " << value << "\n";
+		std::cout << "Error: bad input => " << value << "\n";
 		return ERROR;
 	}
-	else if (doubleValue > 2147483647)
+	else if (doubleValue > 1000)
 	{
 		std::cout << "Error: too large a number.\n";
 		return ERROR;
