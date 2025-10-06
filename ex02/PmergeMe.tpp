@@ -15,34 +15,14 @@ bool	isNum(std::string str)
 }
 
 template <class T>
-void printLists(T first, T second)
-{
-	if (first.empty() == false)
-	{
-		std::cout << "\nfirst list : ";
-		for (size_t i = 0; i < first.size(); i++)
-		std::cout << first[i] << " ";
-	}
-	std::cout << "\n";
-	if (second.empty() == false)
-	{
-		std::cout << "second list : ";
-		for (size_t i = 0; i < second.size(); i++)
-			std::cout << second[i] << " ";
-	}
-	std::cout << "\n\n" << std::endl;
-}
-
-template <class T>
 void printList(T List)
 {
 	if (List.empty() == false)
 	{
-		std::cout << "\nList : ";
 		for (size_t i = 0; i < List.size(); i++)
 			std::cout << List[i] << " ";
 	}
-	std::cout << "\n\n" << std::endl;
+	std::cout << std::endl;
 }
 
 
@@ -96,19 +76,14 @@ template <class T>
 PmergeMe<T>::PmergeMe(char** argv)
 {
 	std::string tmp;
-	T list;
 	for (int i = 1; argv[i]; i++)
 	{
 		tmp = argv[i];
 		if (isNum(tmp) == false)
-		{
-			std::cout << "Invalid entry\n";			
-			return ;
-		}
-		list.push_back(std::atoi(argv[i]));
+			throw(std::invalid_argument("Error\n"));	
+		_list.push_back(std::atoi(argv[i]));
 	}
-	_jacobsthal = jacobsthalSequence(list.size());
-	sortList(list);
+	_jacobsthal = jacobsthalSequence(_list.size());
 }
 
 template <class T>
@@ -117,6 +92,11 @@ PmergeMe<T>::~PmergeMe()
 
 }
 
+template <class T>
+T&	PmergeMe<T>::getList()
+{
+	return this->_list;
+}
 
 // #################################################################
 // #################################################################
@@ -208,13 +188,13 @@ void insertByJacobsthal(T &jacobsthal, T &list, T &loser)
 
 
 template <class T>
-void	PmergeMe<T>::sortList(T &list)
+T&	PmergeMe<T>::sortList(T &list)
 {
 	T winners;
 	T losers;
 	
 	if (list.size() <= 1)
-		return ;
+		return list;
 	size_t i = 0;
 	while(i < list.size() - 1)
 	{
@@ -227,6 +207,5 @@ void	PmergeMe<T>::sortList(T &list)
 	sortList(winners);
 	list = winners;
 	insertByJacobsthal(_jacobsthal, list, losers);
-
-	printList(list);
+	return list;
 }

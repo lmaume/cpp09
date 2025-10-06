@@ -14,13 +14,18 @@ class PmergeMe
 {
 	private:
 		T		_jacobsthal;
+		T		_list;
 		T		jacobsthalSequence(size_t size);
-		void	sortList(T &list);
 	public:
+		T&	sortList(T &list);
+		T&	getList();
+
 		PmergeMe(char** argv);
 		~PmergeMe();
 };
 
+template <class T>
+void	printList(T List);
 
 # include "PmergeMe.tpp"
 
