@@ -6,6 +6,7 @@
 # include <vector>
 # include <deque>
 # include <list>
+# include <math.h>
 
 
 template <class T>

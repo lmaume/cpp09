@@ -19,16 +19,16 @@ void printLists(T first, T second)
 {
 	if (first.empty() == false)
 	{
-		std::cout << "\nfirst : ";
+		std::cout << "\nfirst list : ";
 		for (size_t i = 0; i < first.size(); i++)
 		std::cout << first[i] << " ";
 	}
 	std::cout << "\n";
 	if (second.empty() == false)
 	{
-		std::cout << "second : ";
+		std::cout << "second list : ";
 		for (size_t i = 0; i < second.size(); i++)
-		std::cout << second[i] << " ";
+			std::cout << second[i] << " ";
 	}
 	std::cout << "\n\n" << std::endl;
 }
@@ -40,7 +40,7 @@ void printList(T List)
 	{
 		std::cout << "\nList : ";
 		for (size_t i = 0; i < List.size(); i++)
-		std::cout << List[i] << " ";
+			std::cout << List[i] << " ";
 	}
 	std::cout << "\n\n" << std::endl;
 }
@@ -143,7 +143,7 @@ void makePairs(T *losers, T *winners, int a, int b)
 //?###########################################################################################
 
 template <typename T>
-void binaryInsert(T& sorted, int value) 
+void binaryInsert(T& sorted, const int value) 
 {
     typename T::iterator low = sorted.begin();
     typename T::iterator high = sorted.end();
@@ -168,75 +168,111 @@ size_t indexForJacobsthal(T &jacobsthal, size_t size)
 	return i;
 }
 
+// template <typename T>
+// void insertByJacob(T &jacobsthal, T &cont, T &loser)
+// {
+//     std::vector<bool> inserted(loser.size(), false);
+//     size_t i = 0;
+//     size_t j = indexForJacobsthal(jacobsthal, loser.size());
+//     size_t tmp = 0;
+
+
+//     while (i < j && i < loser.size())
+//     {
+// 		std::cout <<  "insertion loop iteration\n";
+//         size_t index = jacobsthal[i];
+//         if (tmp == i && inserted[index] == false)
+//         {
+// 			std::cout << "inserting1 " << loser[index] << ".\n";
+//             binaryInsert(cont, loser[index]);
+//             inserted[index] = true;
+//         }
+//         index--;
+//         while (tmp != i && inserted[index] == false)
+//         {
+// 			std::cout << "inserting2 " << loser[index] << ".\n";
+//             binaryInsert(cont, loser[index]);
+//             inserted[index] = true;
+//             index--;
+//         }
+//         tmp = i;
+//         i++;
+//     }
+// }
+
+
+// template <typename T>
+// void insertByJacobsthal(T &jacobsthal, T &cont, T &loser)
+// {
+//     std::vector<bool> inserted(loser.size(), false);
+//     size_t total = loser.size();
+
+//     for (size_t i = 1; i <= indexForJacobsthal(jacobsthal, total); ++i)
+//     {
+//         size_t idx = jacobsthal[i];
+//         if (idx >= total)
+//             break ;
+//         if (!inserted[idx])
+//         {
+//             binaryInsert(cont, loser[idx]);
+//             inserted[idx] = true;
+//         }
+//         size_t prevIdx = 0;
+//         if (i > 1)
+//             prevIdx = jacobsthal[i - 1];
+//         while (idx > prevIdx)
+//         {
+//             idx--;
+//             if (!inserted[idx])
+//             {
+//                 binaryInsert(cont, loser[idx]);
+//                 inserted[idx] = true;
+//             }
+//         }
+//     }
+// }
+
 template <typename T>
 void insertByJacobsthal(T &jacobsthal, T &cont, T &loser)
 {
     std::vector<bool> inserted(loser.size(), false);
-    size_t i = 0;
-    size_t j = indexForJacobsthal(jacobsthal, loser.size());
-    size_t tmp = 0;
-
-
-    while (i < j && i < loser.size())
+    size_t numElements = loser.size();
+    
+    if (!loser.empty())
     {
-        size_t index = jacobsthal[i];
-        if (tmp == i && inserted[index] == false)
-        {
-			std::cout << "inserting " << loser[index] << ".\n";
-            binaryInsert(cont, loser[index]);
-            inserted[index] = true;
+        binaryInsert(cont, loser[0]);
+        inserted[0] = true;
+    }
+    size_t prev = 1;
+    for (size_t i = 1; i < numElements; i++)
+    {
+        size_t curr = jacobsthal[i];
+        if (curr >= numElements)
+            curr = numElements - 1;
+        if (!inserted[curr]) {
+            binaryInsert(cont, loser[curr]);
+            inserted[curr] = true;
         }
-        index--;
-        while (tmp != i && inserted[index] == false)
+        for (size_t j = curr - 1; j > prev && j < numElements; j--)
         {
-			std::cout << "inserting " << loser[index] << ".\n";
-            binaryInsert(cont, loser[index]);
-            inserted[index] = true;
-            index--;
+            if (!inserted[j]) {
+                binaryInsert(cont, loser[j]);
+                inserted[j] = true;
+            }
         }
-        tmp = i;
-        i++;
+        prev = curr;
+    }
+    for (size_t i = 0; i < numElements; i++)
+    {
+        if (!inserted[i]) {
+            binaryInsert(cont, loser[i]);
+            inserted[i] = true;
+        }
     }
 }
 
-
 //?###########################################################################################
 
-
-// template <class T>
-// void	PmergeMe<T>::sortList(T list)
-// {
-// 	T winners;
-// 	T losers;
-
-// 	if (list.size() <= 1)
-// 		return ;
-
-// 	std::cout << "_jacobsthal\n";
-// 	printLists(_jacobsthal, _jacobsthal);
-// 	while(list.empty() == false)
-// 	{
-
-// 		if (list.size() > 1)
-// 		{
-// 			makePairs(&losers, &winners, list[0], list[1]);
-// 			list.erase(list.begin(), list.begin()+2);
-// 		}
-// 		else if (list.size() == 1)
-// 		{
-// 			std::cout << list[0] << "\n";
-// 			losers.push_back(list[0]);
-// 			list.erase(list.begin(), list.begin()+1);
-// 		}
-// 		std::cout << "list\n";
-// 		printLists(losers, list);
-// 	}
-// 	sortList(winners);
-// 	list = winners;
-// 	insertByJacobsthal(_jacobsthal, list, losers);
-
-// 	printLists(losers, list);
-// }
 
 template <class T>
 void	PmergeMe<T>::sortList(T list)
@@ -246,35 +282,33 @@ void	PmergeMe<T>::sortList(T list)
 	
 	if (list.size() <= 1)
 		return ;
-		
-	printList(_jacobsthal);
 	size_t i = 0;
 	while(i < list.size() - 1)
 	{
-		std::cout << "even : " << list[i] << " and " << list[i + 1] << "\n\n";
-		
 		makePairs(&losers, &winners, list[i], list[i+1]);
 		i += 2;
-		printLists(losers, winners);
+		// std::cout << "losers, winners :";
+		// printLists(losers, winners);
 	}
 	if (list.size() % 2 != 0)
-	{
-		std::cout << "odd : " << list[i] << "\n";
 		losers.push_back(list[i]);
-	}
-	std::cout << "before sort, after loop\n";
-	printList(winners);
 
+	// std::cout << "winner before sort, after loop :";
+	// printList(winners);
+
+	std::cout << "here\n";
 	sortList(winners);
-	
-	printList(winners);
+
+	// std::cout << "winner after sort :";
+	// printList(winners);
+
 	list = winners;
 
-	std::cout << "after sort,\n";
-	printList(list);
+	// std::cout << "list after sort :";
+	// printList(list);
 
 	insertByJacobsthal(_jacobsthal, list, losers);
 	
-	std::cout << "after insert,\n";
+	// std::cout << "list after insert :";
 	printList(list);
 }
