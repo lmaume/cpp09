@@ -118,14 +118,12 @@ PmergeMe<T>::~PmergeMe()
 }
 
 
-
+// #################################################################
 // #################################################################
 
 template <class T>
 void makePairs(T *losers, T *winners, int a, int b)
 {
-	// std::cout << "a is " << a << " and b is " << b << ".";
-
 	if (a > b)
 	{
 		winners->push_back(a);
@@ -137,10 +135,6 @@ void makePairs(T *losers, T *winners, int a, int b)
 		losers->push_back(a);
 	}
 }
-
-
-
-//?###########################################################################################
 
 template <typename T>
 void binaryInsert(T& sorted, const int value) 
@@ -168,114 +162,53 @@ size_t indexForJacobsthal(T &jacobsthal, size_t size)
 	return i;
 }
 
-// template <typename T>
-// void insertByJacob(T &jacobsthal, T &cont, T &loser)
-// {
-//     std::vector<bool> inserted(loser.size(), false);
-//     size_t i = 0;
-//     size_t j = indexForJacobsthal(jacobsthal, loser.size());
-//     size_t tmp = 0;
-
-
-//     while (i < j && i < loser.size())
-//     {
-// 		std::cout <<  "insertion loop iteration\n";
-//         size_t index = jacobsthal[i];
-//         if (tmp == i && inserted[index] == false)
-//         {
-// 			std::cout << "inserting1 " << loser[index] << ".\n";
-//             binaryInsert(cont, loser[index]);
-//             inserted[index] = true;
-//         }
-//         index--;
-//         while (tmp != i && inserted[index] == false)
-//         {
-// 			std::cout << "inserting2 " << loser[index] << ".\n";
-//             binaryInsert(cont, loser[index]);
-//             inserted[index] = true;
-//             index--;
-//         }
-//         tmp = i;
-//         i++;
-//     }
-// }
-
-
-// template <typename T>
-// void insertByJacobsthal(T &jacobsthal, T &cont, T &loser)
-// {
-//     std::vector<bool> inserted(loser.size(), false);
-//     size_t total = loser.size();
-
-//     for (size_t i = 1; i <= indexForJacobsthal(jacobsthal, total); ++i)
-//     {
-//         size_t idx = jacobsthal[i];
-//         if (idx >= total)
-//             break ;
-//         if (!inserted[idx])
-//         {
-//             binaryInsert(cont, loser[idx]);
-//             inserted[idx] = true;
-//         }
-//         size_t prevIdx = 0;
-//         if (i > 1)
-//             prevIdx = jacobsthal[i - 1];
-//         while (idx > prevIdx)
-//         {
-//             idx--;
-//             if (!inserted[idx])
-//             {
-//                 binaryInsert(cont, loser[idx]);
-//                 inserted[idx] = true;
-//             }
-//         }
-//     }
-// }
-
 template <typename T>
-void insertByJacobsthal(T &jacobsthal, T &cont, T &loser)
+void insertByJacobsthal(T &jacobsthal, T &list, T &loser)
 {
-    std::vector<bool> inserted(loser.size(), false);
-    size_t numElements = loser.size();
-    
-    if (!loser.empty())
-    {
-        binaryInsert(cont, loser[0]);
-        inserted[0] = true;
-    }
-    size_t prev = 1;
-    for (size_t i = 1; i < numElements; i++)
-    {
-        size_t curr = jacobsthal[i];
-        if (curr >= numElements)
-            curr = numElements - 1;
-        if (!inserted[curr]) {
-            binaryInsert(cont, loser[curr]);
-            inserted[curr] = true;
-        }
-        for (size_t j = curr - 1; j > prev && j < numElements; j--)
-        {
-            if (!inserted[j]) {
-                binaryInsert(cont, loser[j]);
-                inserted[j] = true;
-            }
-        }
-        prev = curr;
-    }
-    for (size_t i = 0; i < numElements; i++)
-    {
-        if (!inserted[i]) {
-            binaryInsert(cont, loser[i]);
-            inserted[i] = true;
-        }
-    }
+	std::vector<bool> inserted(loser.size(), false);
+	size_t size = loser.size();
+
+	if (!loser.empty())
+	{
+		binaryInsert(list, loser[0]);
+		inserted[0] = true;
+	}
+	size_t prev = 1;
+	for (size_t i = 1; i < size; i++)
+	{
+		size_t index = jacobsthal[i];
+		if (index >= size)
+			index = size - 1;
+		if (!inserted[index])
+		{
+			binaryInsert(list, loser[index]);
+			inserted[index] = true;
+		}
+		for (size_t j = index - 1; j > prev && j < size; j--)
+		{
+			if (!inserted[j])
+			{
+				binaryInsert(list, loser[j]);
+				inserted[j] = true;
+			}
+		}
+		prev = index;
+	}
+	for (size_t i = 0; i < size; i++)
+	{
+		if (!inserted[i])
+		{
+			binaryInsert(list, loser[i]);
+			inserted[i] = true;
+		}
+	}
 }
 
 //?###########################################################################################
 
 
 template <class T>
-void	PmergeMe<T>::sortList(T list)
+void	PmergeMe<T>::sortList(T &list)
 {
 	T winners;
 	T losers;
@@ -287,28 +220,13 @@ void	PmergeMe<T>::sortList(T list)
 	{
 		makePairs(&losers, &winners, list[i], list[i+1]);
 		i += 2;
-		// std::cout << "losers, winners :";
-		// printLists(losers, winners);
 	}
 	if (list.size() % 2 != 0)
 		losers.push_back(list[i]);
-
-	// std::cout << "winner before sort, after loop :";
-	// printList(winners);
-
-	std::cout << "here\n";
-	sortList(winners);
-
-	// std::cout << "winner after sort :";
-	// printList(winners);
-
-	list = winners;
-
-	// std::cout << "list after sort :";
-	// printList(list);
-
-	insertByJacobsthal(_jacobsthal, list, losers);
 	
-	// std::cout << "list after insert :";
+	sortList(winners);
+	list = winners;
+	insertByJacobsthal(_jacobsthal, list, losers);
+
 	printList(list);
 }
