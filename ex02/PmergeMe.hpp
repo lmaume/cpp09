@@ -15,7 +15,6 @@ template <class T>
 class PmergeMe
 {
 	private:
-		T		_jacobsthal;
 		T		_list;
 		T		jacobsthalSequence(size_t size);
 	public:

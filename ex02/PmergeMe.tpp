@@ -19,8 +19,17 @@ void printList(T List)
 {
 	if (List.empty() == false)
 	{
-		for (size_t i = 0; i < List.size(); i++)
+		if (List.size() <= 5)
+		{
+			for (size_t i = 0; i < List.size(); i++)
 			std::cout << List[i] << " ";
+		}
+		else
+		{
+			for (size_t i = 0; i < 4; i++)
+			std::cout << List[i] << " ";
+			std::cout << "[...]";
+		}
 	}
 	std::cout << std::endl;
 }
@@ -40,33 +49,9 @@ bool isSorted(T list)
 	return true;
 }
 
-template <class T>
-T PmergeMe<T>::jacobsthalSequence(size_t size)
+size_t    jacobsthalSequence(size_t n)
 {
-	T sequence;
-	size_t a = 0;
-	size_t b = 1;
-	
-	if (size <= 0)
-		return sequence;
-
-	// Ajoute les deux premiers termes de la sequence
-	sequence.push_back(0);
-	if (size >= 1)
-		sequence.push_back(1);
-
-	size_t current = 1;
-	while (current < size)
-	{
-		current = b + 2 * a;
-		if (current > size)
-			break ;
-		sequence.push_back(current);
-		a = b;
-		b = current;
-	}
-
-	return sequence;
+	return ((pow(2, n) - pow(-1, n)) / 3);
 }
 
 // #################################################################
@@ -83,13 +68,12 @@ PmergeMe<T>::PmergeMe(char** argv)
 			throw(std::invalid_argument("Error\n"));	
 		_list.push_back(std::atoi(argv[i]));
 	}
-	_jacobsthal = jacobsthalSequence(_list.size());
+	// _jacobsthal = jacobsthalSequence(_list.size());
 }
 
 template <class T>
 PmergeMe<T>::~PmergeMe()
 {
-
 }
 
 template <class T>
@@ -134,16 +118,16 @@ void binaryInsert(T& sorted, const int value)
 }
 
 template <class T>
-size_t indexForJacobsthal(T &jacobsthal, size_t size)
+size_t indexForJacobsthal(size_t size)
 {
 	size_t i = 0;
-	while (jacobsthal[i] < static_cast<int>(size))
+	while (jacobsthalSequence(i) < size)
 		i++;
 	return i;
 }
 
 template <typename T>
-void insertByJacobsthal(T &jacobsthal, T &list, T &loser)
+void insertByJacobsthal(T &list, T &loser)
 {
 	std::vector<bool> inserted(loser.size(), false);
 	size_t size = loser.size();
@@ -156,7 +140,7 @@ void insertByJacobsthal(T &jacobsthal, T &list, T &loser)
 	size_t prev = 1;
 	for (size_t i = 1; i < size; i++)
 	{
-		size_t index = jacobsthal[i];
+		size_t index = jacobsthalSequence(i);
 		if (index >= size)
 			index = size - 1;
 		if (!inserted[index])
@@ -206,6 +190,6 @@ T&	PmergeMe<T>::sortList(T &list)
 	
 	sortList(winners);
 	list = winners;
-	insertByJacobsthal(_jacobsthal, list, losers);
+	insertByJacobsthal(list, losers);
 	return list;
 }

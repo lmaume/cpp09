@@ -13,28 +13,35 @@ int main(int argc, char** argv)
 		
 		std::cout << "Before: ";
 		printList(Victor.getList());
-		
-		//? sort with vector
-		
-		timespec startspec;
-		timespec endspec;
-		// clock_gettime(CLOCK_REALTIME, &startspec);
-	
-		long double start = startspec.tv_nsec;
-		std::vector<int>vecList = Victor.sortList(Victor.getList());
-		long double timerA = endspec.tv_nsec;
 
-		start = startspec.tv_nsec;
+
+		//? sort with vector
+		//start vector timer		
+		std::clock_t startVector = std::clock();
+		//sort vector
+		std::vector<int>vecList = Victor.sortList(Victor.getList());
+		//end vector timer
+		std::clock_t endVector = std::clock();
+        double durationVector = 1000000.0 * (endVector - startVector) / CLOCKS_PER_SEC;
+
+
+		//? sort with deque
+		//start deque timer
+		std::clock_t startDeque = std::clock();
+		//sort deque
 		std::deque<int>deqList = Tails.sortList(Tails.getList());
-		long double timerB = endspec.tv_nsec;
+		//end deque timer
+		std::clock_t endDeque = std::clock();
+        double durationDeque = 1000000.0 * (endDeque - startDeque) / CLOCKS_PER_SEC;
+
 
 		//? cout after
 		std::cout << "After: ";
 		printList(vecList);
 
 		//? cout time
-		std::cout << "Time to process a range of " << argc - 1 << " elements with std::vector<int> : " << std::fixed << timerA - start << " us\n";
-		std::cout << "Time to process a range of " << argc - 1 << " elements with std::deque<int> : " << timerB - start << " us\n";
+		std::cout << "Time to process a range of " << argc - 1 << " elements with std::vector<int> : " << durationVector << " us\n";
+		std::cout << "Time to process a range of " << argc - 1 << " elements with std::deque<int> : " << durationDeque << " us\n";
 	}
 	catch(std::invalid_argument e)
 	{
