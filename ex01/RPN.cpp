@@ -11,14 +11,21 @@ RPN::RPN(char** input)
 	if (str.find_first_not_of("0123456789+-*/ ") != str.npos)
 	{
 		std::cout << "Error\n";
-		return;
+		return ;
 	}
-
 	while (it < length)
 	{
-		this->_operation.push(str[it]);
+		if (isSign(str[it]) == true)
+			this->_operation.push(str[it]);
+		else if (isdigit(str[it]) != false)
+			this->_digital.push(std::atoi(&str[it]));
 		it += 2;
 	}
+	if (this->_operation.size() != this->_digital.size() - 1)
+	{
+		std::cout << "0\n";
+		return ;
+	}	
 	operationMaker();
 }
 
@@ -35,7 +42,7 @@ int calculator(int a, int b, char sign)
 		return a - b;
 	else if (sign == '*')
 		return a * b;
-	else if (sign == '/')
+	else if (sign == '/' && b != 0)
 		return a / b;
 	return 0;
 }
@@ -50,30 +57,22 @@ bool isSign(char sign)
 void badInput()
 {
 	std::cerr << "0\n";
-	return;
+	return ;
 }
 
 void RPN::operationMaker()
 {
 	int		first;
 	int		second;
-	char	tmp = _operation.front();
 
-	first = std::atoi(&tmp);
-	if (std::isdigit(abs(first) + '0') == false )
-		return badInput();
-	_operation.pop();
+	first = _digital.top();
+	_digital.pop();
 
 	while (_operation.empty() == false)
 	{
-		tmp = _operation.front();
-		second = std::atoi(&tmp);
-		_operation.pop();
-
-		if (std::isdigit(abs(second) + '0') == false || isSign(_operation.front()) == false)
-			return badInput();
-		else
-			first = calculator(first, second, _operation.front());
+		second = _digital.top();
+		_digital.pop();
+		first = calculator(first, second, _operation.front());
 		_operation.pop();
 	}
 	std::cout << first << "\n";
